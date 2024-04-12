@@ -1,0 +1,68 @@
+<div style="text-align: center;">
+  <h1>Naruto Jutsu Generator</h1>
+  <div class="main bg-image">
+    <div class="left-side">
+      <p>Click To Form Hand Seals Sequence</p>
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 579">
+        <image xlink:href="assets/hand-gestures-map.jpeg"></image>
+         <a class="border">
+          <rect (click)="appendSeal('bird')" x="35" y="30" fill="#fff" opacity="0" width="122" height="135"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('boar')" x="206" y="28" fill="#fff" opacity="0" width="125" height="139"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('dog')" x="379" y="30" fill="#fff" opacity="0" width="123" height="135"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('dragon')" x="551" y="27" fill="#fff" opacity="0" width="124" height="137"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('ox')" x="33" y="210" fill="#fff" opacity="0" width="124" height="136"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('tiger')" x="208" y="209" fill="#fff" opacity="0" width="125" height="136"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('serpent')" x="381" y="207" fill="#fff" opacity="0" width="126" height="138"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('rat')" x="551" y="207" fill="#fff" opacity="0" width="125" height="140"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('horse')" x="33" y="384" fill="#fff" opacity="0" width="125" height="139"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('monkey')" x="209" y="385" fill="#fff" opacity="0" width="126" height="139"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('hare')" x="383" y="384" fill="#fff" opacity="0" width="124" height="138"></rect>
+        </a>
+        <a class="border">
+          <rect (click)="appendSeal('ram')" x="552" y="383" fill="#fff" opacity="0" width="124" height="140"></rect>
+        </a>
+      </svg>
+      <div id="sealsTextArea">
+        <p>{{seals}}</p>
+      </div>
+      <div *ngIf="seals">
+        <button (click)="createJutsu()">Create Jutsu</button>
+      </div>
+      
+    </div>
+    <div class="right-side">
+      <div style="position: relative;">
+        <ngx-spinner type="ball-clip-rotate" [fullScreen]="false"></ngx-spinner>
+        <img [src]="currentImage" class="thumbnail">
+      </div>
+      <div *ngIf="selectedJutsu != null">
+        <p style="text-transform: capitalize; margin-top: 1em;">{{selectedJutsu.name}}</p>
+        <button (click)="weaveSeals()" >Weave Seals</button>
+        <button (click)="reset()">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<router-outlet />
