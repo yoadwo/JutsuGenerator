@@ -26,7 +26,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Service
 public class GeminiAIHttp implements GenerativeAIHttp {
     Logger logger = Logger.getLogger(this.getClass().getName());
-    private final String MODEL_NAME =  "gemini-1.0-pro";
     private RestClient restClient;
 
     @Autowired
@@ -50,6 +49,7 @@ public class GeminiAIHttp implements GenerativeAIHttp {
     public JutsuInfo generateTechnique(String seals) throws JsonProcessingException {
         logger.info("sending seals prompt to model");
         GeminiAIRequest geminiAI = buildPrompt(seals);
+        String MODEL_NAME = "gemini-1.0-pro";
         var response = restClient.post()
                 .uri("v1beta/models/{modelName}:generateContent?key={apiKey}", MODEL_NAME, this.restClientsConfig.getGemini())
                 .contentType(APPLICATION_JSON)
@@ -65,11 +65,10 @@ public class GeminiAIHttp implements GenerativeAIHttp {
                 })
                 .body(GeminiAIResponse.class);
         logger.info("received jutsu from model");
-        String generatedResponseText = null;
+        String generatedResponseText;
         try {
             generatedResponseText = response.getCandidates().get(0).getContent().getParts().get(0).getText();
-            var jutsuInfo = new ObjectMapper().readValue(generatedResponseText, JutsuInfo.class);
-            return jutsuInfo;
+            return new ObjectMapper().readValue(generatedResponseText, JutsuInfo.class);
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             System.err.printf("EdenAI Response changed: %s", e.getMessage());
             throw new InternalError(e.getMessage());
@@ -77,7 +76,7 @@ public class GeminiAIHttp implements GenerativeAIHttp {
     }
 
     @Override
-    public String generateImage(String prompt) throws Exception {
+    public String generateImage(String prompt) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Do not use EdenAI for image generation");
     }
 

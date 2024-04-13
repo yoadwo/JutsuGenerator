@@ -74,7 +74,7 @@ public class EdenAIHttp implements GenerativeAIHttp {
     }
 
     @Override
-    public JutsuInfo generateTechnique(String seals) throws JsonProcessingException {
+    public JutsuInfo generateTechnique(String seals) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Do not use EdenAI for text generation");
     }
 
