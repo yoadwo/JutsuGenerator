@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.gingos.ai</groupId>
-	<artifactId>jutsu-generator</artifactId>
+	<artifactId>JutsuGenerator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>jutsu-generator</name>
 	<description>Project for generating jutsu with AI tools</description>
