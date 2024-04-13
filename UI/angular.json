@@ -60,7 +60,7 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/jutsuGenerator/",
+              "baseHref": "/JutsuGenerator/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
