@@ -30,5 +30,6 @@ jobs:
       env:
         REPO: self
         BRANCH: gh-pages
-        FOLDER: UI/dist/jutsu-generator-client
+        # for angular17 and above, build output is dist/<name>/browser
+        FOLDER: UI/dist/jutsu-generator-client/browser
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
