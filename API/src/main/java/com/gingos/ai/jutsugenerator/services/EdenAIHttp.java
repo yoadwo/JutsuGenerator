@@ -3,9 +3,12 @@ package com.gingos.ai.jutsugenerator.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gingos.ai.jutsugenerator.models.JutsuInfo;
+import com.gingos.ai.jutsugenerator.models.RestClientsConfig;
 import com.gingos.ai.jutsugenerator.models.edenai.EdenAIRequest;
 import com.gingos.ai.jutsugenerator.models.edenai.EdenAIResponse;
+import jakarta.annotation.PostConstruct;
 import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -21,10 +24,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Service
 public class EdenAIHttp implements GenerativeAIHttp {
     Logger logger = Logger.getLogger(this.getClass().getName());
-    private final String TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWRiYWJmMWMtOGQ5MS00N2RkLTliNGEtMWRlZGY1NmRhYmU2IiwidHlwZSI6ImFwaV90b2tlbiJ9.pGO6wGwooYiR6wxp8Qawg9FGJ4YMzHJrDmJilmTyhYQ";
+    private RestClient restClient;
 
-    private final RestClient restClient;
+    @Autowired
+    private RestClientsConfig restClientsConfig;
+
     public EdenAIHttp(){
+    }
+
+    @PostConstruct
+    public void init() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(Collections.singletonList(APPLICATION_JSON));
 
@@ -32,9 +41,10 @@ public class EdenAIHttp implements GenerativeAIHttp {
                 .requestFactory(new HttpComponentsClientHttpRequestFactory())
                 .messageConverters(converters -> converters.add(converter))
                 .baseUrl("https://api.edenai.run")
-                .defaultHeader("Authorization", "Bearer " + TOKEN)
+                .defaultHeader("Authorization", "Bearer " + restClientsConfig.getEden())
                 .build();
     }
+
 
     @Override
     public String generateImage(String prompt) throws Exception {

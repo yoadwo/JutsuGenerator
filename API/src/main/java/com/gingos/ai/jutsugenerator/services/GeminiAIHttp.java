@@ -3,8 +3,11 @@ package com.gingos.ai.jutsugenerator.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gingos.ai.jutsugenerator.models.JutsuInfo;
+import com.gingos.ai.jutsugenerator.models.RestClientsConfig;
 import com.gingos.ai.jutsugenerator.models.geminiai.*;
+import jakarta.annotation.PostConstruct;
 import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -24,10 +27,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 public class GeminiAIHttp implements GenerativeAIHttp {
     Logger logger = Logger.getLogger(this.getClass().getName());
     private final String MODEL_NAME =  "gemini-1.0-pro";
-    private final String API_KEY = "AIzaSyDrf93mNih8kaIggjzfgzMLfIfBy_Q0jdQ";
+    private RestClient restClient;
 
-    private final RestClient restClient;
+    @Autowired
+    private RestClientsConfig restClientsConfig;
     public GeminiAIHttp(){
+    }
+
+    @PostConstruct
+    public void init(){
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(Collections.singletonList(APPLICATION_JSON));
 
@@ -43,7 +51,7 @@ public class GeminiAIHttp implements GenerativeAIHttp {
         logger.info("sending seals prompt to model");
         GeminiAIRequest geminiAI = buildPrompt(seals);
         var response = restClient.post()
-                .uri("v1beta/models/{modelName}:generateContent?key={apiKey}", MODEL_NAME, API_KEY)
+                .uri("v1beta/models/{modelName}:generateContent?key={apiKey}", MODEL_NAME, this.restClientsConfig.getGemini())
                 .contentType(APPLICATION_JSON)
                 .body(geminiAI)
                 .retrieve()
@@ -57,9 +65,15 @@ public class GeminiAIHttp implements GenerativeAIHttp {
                 })
                 .body(GeminiAIResponse.class);
         logger.info("received jutsu from model");
-        String generatedResponseText = response.getCandidates().get(0).getContent().getParts().get(0).getText();
-        var jutsuInfo = new ObjectMapper().readValue(generatedResponseText, JutsuInfo.class);
-        return jutsuInfo;
+        String generatedResponseText = null;
+        try {
+            generatedResponseText = response.getCandidates().get(0).getContent().getParts().get(0).getText();
+            var jutsuInfo = new ObjectMapper().readValue(generatedResponseText, JutsuInfo.class);
+            return jutsuInfo;
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
+            System.err.printf("EdenAI Response changed: %s", e.getMessage());
+            throw new InternalError(e.getMessage());
+        }
     }
 
     @Override

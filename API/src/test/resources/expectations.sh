@@ -11,7 +11,7 @@ curl -v -X PUT "http://localhost:8080/mockserver/expectation" -d '{
     "body" : "{ \"name\": \"earth style: earth spike jutsu\", \"prompt\": \"the ground where the training dummy stands splits apart and three large rocks erupt from the ground, impaling the training dummy from the bottom.\" }",
     "headers" : {
           "Content-Type" : [ "application/json" ],
-          "access-control-allow-origin": ["http://localhost:4200"],
+          "access-control-allow-origin": ["http://localhost:4200", "https://yoadwo.github.io/"],
           "access-control-allow-methods": ["GET", "POST", "OPTIONS"],
           "access-control-allow-headers": ["*"]
         }
@@ -26,7 +26,7 @@ curl -v -X PUT "http://localhost:8080/mockserver/expectation" -d '{
   "httpResponse" : {
     "headers" : {
           "Content-Type" : [ "application/json" ],
-          "access-control-allow-origin": ["http://localhost:4200"],
+          "access-control-allow-origin": ["http://localhost:4200", "https://yoadwo.github.io/"],
           "access-control-allow-methods": ["GET", "POST", "OPTIONS"],
           "access-control-allow-headers": ["*"]
         }
