@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/jutsu")
-@CrossOrigin(origins = { "http://localhost:4200", "http://jutsu-generator-api-alb1-495657802.us-east-1.elb.amazonaws.com" })
+@CrossOrigin(origins = { "http://localhost:4200", "https://yoadwo.github.io/" })
 public class JutsuController {
     Logger logger = Logger.getLogger(this.getClass().getName());
 
