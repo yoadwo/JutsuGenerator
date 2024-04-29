@@ -6,6 +6,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { NgxSpinnerService } from "ngx-spinner";
 import { JutsuHttpService } from './jutsu-http.service';
 import { jutsuInfo } from './jutsuInfo';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -78,19 +79,27 @@ export class AppComponent {
   weaveSeals() {
     if (this.selectedJutsu) {
       this.spinner.show();
-      this.jutsuHttp.generateImage(this.selectedJutsu).subscribe(async data => {
-        this.imageUrl = undefined;
-        this.spinner.hide();
-        this.currentSealIndex = 0;
-        while (this.currentSealIndex < this.sealImagesSequence.length) {
-          this.currentImage = this.sealImagesSequence[this.currentSealIndex];
-          await new Promise(f => setTimeout(f, calcDelay(this.sealImagesSequence.length)));
-          this.currentSealIndex++;
-        }
-        // stop displaying the seals, then display generated image
-        this.currentSealIndex = -1;
-        this.currentImage = data.generatedImageUrl;
-      })
+      this.jutsuHttp.generateImage(this.selectedJutsu).subscribe(
+        async data => {
+          this.imageUrl = undefined;
+          this.spinner.hide();
+          await new Promise(f => setTimeout(f, 1));
+          this.currentSealIndex = 0;
+          while (this.currentSealIndex < this.sealImagesSequence.length) {
+            this.currentImage = this.sealImagesSequence[this.currentSealIndex];
+            await new Promise(f => setTimeout(f, calcDelay(this.sealImagesSequence.length)));
+            this.currentSealIndex++;
+          }
+          // stop displaying the seals, then display generated image
+          this.currentSealIndex = -1;
+          this.currentImage = data.generatedImageUrl;
+        },
+        (error: HttpErrorResponse) => {
+          this.spinner.hide();
+          this.currentSealIndex = -1;
+          if (error.status == 504) alert('image processing took too long, try again');
+          else alert ('something went wrong');
+        })
     }
 
   }
