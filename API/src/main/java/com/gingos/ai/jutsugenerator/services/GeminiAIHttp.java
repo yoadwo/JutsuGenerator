@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -80,32 +79,12 @@ public class GeminiAIHttp implements GenerativeAIHttp {
         throw new UnsupportedOperationException("Do not use EdenAI for image generation");
     }
 
-    private JutsuInfo deserialize(String generatedResponseText) {
-        String regex = "\\**[Tt]echnique [Nn]ame\\**:?\\**\\s*(.+)\\s*\\**[Ii]mage [Pp]rompt\\**:?\\**\\s*(.*)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(generatedResponseText);
-
-        if (matcher.find()) {
-            String techniqueName = matcher.group(1).trim();
-            String imagePrompt = matcher.group(2).trim();
-
-            System.out.println("Technique Name: " + techniqueName);
-            System.out.println("Image Prompt: " + imagePrompt);
-            var ji = new JutsuInfo();
-            ji.setName(techniqueName);
-            ji.setPrompt(imagePrompt);
-            return ji;
-        } else {
-            throw new IllegalStateException("should not fail parsing");
-        }
-    }
-
     private GeminiAIRequest buildPrompt(String seals) {
         var parts = new ArrayList<Part>();
         parts.add(new Part("""
                 consider the naruto show and the hand signs seen in it.
                 reminder: 12 basic hand signs (Rat, Ox, Tiger, Hare, Dragon , Snake , Horse , Ram , Monkey , Bird , Dog , Boar )
-                 which combined create some ninja technique, usually elemental (ice, wind, fire, mud, forest, etc.) 
+                 which combined create some ninja technique, usually elemental (ice, wind, fire, mud, forest, etc.)
                  and animal- or from nature-shaped (dragon, wall, ball, needle, forest).  
                  per a given sequence of hand signs, return two outputs:
                   1.a name for the technique always in the form <element> style: <description> jutsu.
@@ -143,6 +122,7 @@ public class GeminiAIHttp implements GenerativeAIHttp {
         return GeminiAIRequest.builder()
                 .contents(List.of(contents))
                 .generationConfig(generateConfig)
+                .safetySettings(List.of(new SafetySettings("HARM_CATEGORY_DANGEROUS_CONTENT","BLOCK_NONE")))
                 .build();
     }
 }
